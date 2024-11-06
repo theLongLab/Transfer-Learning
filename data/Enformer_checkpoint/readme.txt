@@ -1,0 +1,1 @@
+The final Enformer model is saved in checkpoint format and is available for download at: gs://dm-enformer/models/enformer/sonnet_weights/. Please download the files and place them in data/Enformer_checkpoint/.

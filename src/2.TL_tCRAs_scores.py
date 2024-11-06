@@ -51,18 +51,18 @@ print(tf.__version__)
 ###Set up disease and fasta
 dis=config.get("Section1",'dis')
 num_point_tobe_checked=config.get("Section1",'num_point_tobe_checked')
-checkpoint_path = '/home/qingli2/scratch/ModelTraining_OldDGX/human_tfrecords_'+dis+'/checkpoint/checkpoint'+num_point_tobe_checked      
+checkpoint_path = './ModelTraining_OldDGX/human_tfrecords_'+dis+'/checkpoint/checkpoint'+num_point_tobe_checked      
 SNPs_per_file="200K"
 dis_dict={"breast":275,"lung":136,"prostate":357}
 
-fasta_file = '/home/qingli2/scratch/ModelTraining_OldDGX/hg38.ml.fa'
+fasta_file = './ModelTraining_OldDGX/hg38.ml.fa'
 fasta_extractor = FastaStringExtractor(fasta_file)
 SEQUENCE_LENGTH=196608
 
 ###Read SNPs that will be used to calcualte scores
 chrom_item = sys.argv[1] #"1"
 print("Index in 200K: "+chrom_item)
-f=open("/home/qingli2/scratch/ModelTraining_OldDGX/"+dis+"_snps_hg38/"+chrom_item+"."+SNPs_per_file+".txt","r")
+f=open("./ModelTraining_OldDGX/"+dis+"_snps_hg38/"+chrom_item+"."+SNPs_per_file+".txt","r")
 SNPs_list=[]
 line=f.readline()
 while line: 
@@ -70,9 +70,9 @@ while line:
     line=f.readline()
 f.close()
 
-if not os.path.exists("/home/qingli2/scratch/ModelTraining_OldDGX/"+dis+"_snps_hg38_scores/"+num_point_tobe_checked+"/"):
-    os.mkdir("/home/qingli2/scratch/ModelTraining_OldDGX/"+dis+"_snps_hg38_scores/"+num_point_tobe_checked+"/")
-fw=open("/home/qingli2/scratch/ModelTraining_OldDGX/"+dis+"_snps_hg38_scores/"+num_point_tobe_checked+"/"+chrom_item+"."+SNPs_per_file+".SNPs.scores.txt","w")
+if not os.path.exists("./ModelTraining_OldDGX/"+dis+"_snps_hg38_scores/"+num_point_tobe_checked+"/"):
+    os.mkdir("./ModelTraining_OldDGX/"+dis+"_snps_hg38_scores/"+num_point_tobe_checked+"/")
+fw=open("./ModelTraining_OldDGX/"+dis+"_snps_hg38_scores/"+num_point_tobe_checked+"/"+chrom_item+"."+SNPs_per_file+".SNPs.scores.txt","w")
 col_index_for_head = [str(x) for x in range(1,dis_dict.get(dis))]
 fw.write("SNP_ID,"+",".join(col_index_for_head)+"\n") ###Write out the header for scores files
 

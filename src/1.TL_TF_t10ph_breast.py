@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Edit: 20240307
-
-# Conda activate enformer_env
-# enformer_env             /work/long_lab/qli/anaconda3/envs/enformer_env
+# Edit: 20241101
 
 
 ####Load packages
@@ -153,7 +150,7 @@ for i in tqdm(range(hyper_paras.pre_train_steps)):
 
 
 #### Load previous parameters into current models
-checkpoint_path="/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/real_enformer_download/variables/variables"
+checkpoint_path="./data/Enformer_checkpoint/variables/variables"
 
 #### Local model's variables
 all_variables = list(model.variables)
@@ -167,7 +164,7 @@ GEnformer_variables_name_list = tf.train.list_variables(checkpoint_path) ##list 
 
 ##Match local variables and Google trained models
 import json
-variables_files=open("/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/DTL_202211/Enformer_all_Lvariables_matched_withindex_dict_b275.json","r")
+variables_files=open("./data/TL_Enformer_MatchDict/Enformer_all_Lvariables_matched_withindex_dict_b275.json","r")
 variables_match_dict=json.load(variables_files)
 
 
@@ -183,7 +180,7 @@ for key in variables_match_dict_key_list[2:]:
 train_step = create_step_function(model, tissue, optimizer1, optimizer2, hyper_paras.batch_size)
 
 ###If there are prvious check points, restor model from there. 
-checkpoint_root = "/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/human_tfrecords_"+tissue+"/checkpoint"
+checkpoint_root = "./human_tfrecords_"+tissue+"/checkpoint"
 if not os.path.exists(checkpoint_root):
     os.system('mkdir -p '+checkpoint_root)
 checkpoint_name = "t10ph"
