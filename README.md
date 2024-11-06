@@ -1,7 +1,7 @@
 # Users’ Manual of Transfer-Learning
 ## Overview
 
-![My Image](/Figure/Figure1.png)
+![My Image](/Figure/Figure1_20240709.png)
 
 ## Prerequisites
 - **Required python package**
@@ -12,12 +12,15 @@
   - pandas (1.2.3)
   - tensoflow (2.4.1)
 
-## Environment set up
-Install through Anaconda: conda create --name TL --file TL_env.txt
-
 ## Conduct transfer Learning
+```
+python 1_DTL_TF_t10ph_breast.py
+```
+## Calculate tCRAs scores from TL-breast and TL-prostate
 
-## Calculate tCRAs scores
+## Download variants scores from Enformer models
+Variant effect scores for all common variants (MAF > 0.5% in any population) included in the 1000 Genomes Project from Enformer model are available:
+https://github.com/google-deepmind/deepmind-research/tree/master/enformer
 
 ## Conduct TWAS analyses
 
