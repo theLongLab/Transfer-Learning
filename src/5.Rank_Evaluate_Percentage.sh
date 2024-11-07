@@ -10,10 +10,5 @@
 #SBATCH --partition=theia,mtst,bigmem
 
 #conda activate polyfun
-
-#python 5.Rank_Evaluate_Percentage.py $1 DTL breast 2024 #$1 50000,100000
-
-#python 5.Rank_Evaluate_Percentage.py $1 ENF breast 0 #$1 50000,100000
-
 python 5.Rank_Evaluate_Percentage.py $1 DTL prostate 2024 #$1 50000,100000
 

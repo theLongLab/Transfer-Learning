@@ -36,9 +36,9 @@ def chr_pos_strat_end_lists(dis, CellLine,ChromState):
     for i in range(22):
         chr_pos_start_lists.append(list())
     if dis=="breast":
-        f=open("/work/long_lab/qli/postdoc/Cancer_GWAS_SS/Enhancer_Promoters_Annotations/roadmap_enhancer_bed/AllDenseBedHg19/"+CellLine+"_15_coreMarks_dense.bed","r")
+        f=open("./Cancer_GWAS_SS/Enhancer_Promoters_Annotations/roadmap_enhancer_bed/AllDenseBedHg19/"+CellLine+"_15_coreMarks_dense.bed","r")
     elif dis=="prostate":
-        f=open("/work/long_lab/qli/postdoc/Cancer_GWAS_SS/Enhancer_Promoters_Annotations/PMID34513844_15chromatin_states/"+CellLine+"_15states_joint_model_dense.bed","r")
+        f=open("./Cancer_GWAS_SS/Enhancer_Promoters_Annotations/PMID34513844_15chromatin_states/"+CellLine+"_15states_joint_model_dense.bed","r")
     
     header=f.readline()
     line=f.readline().strip()
@@ -101,7 +101,7 @@ def number_SNPs_in_out_of_func_regions(dis, target_SNPs_set,CellLine,ChromState)
 
 
 def process(dis, batch, SnpNumsString , model, StatesIndex, log):
-    wk="/work/long_lab/qli/postdoc/Cancer_GWAS_SS/Enhancer_Promoters_Annotations/roadmap/percentage_res/"
+    wk="./Cancer_GWAS_SS/Enhancer_Promoters_Annotations/roadmap/percentage_res/"
     model_prefix=dis+"_"+model+"_"+batch
     if dis=="breast":
         cell_lines=["E027","E028","E029","E055","E066","E119","E121","E124","E125","E126"]
@@ -117,7 +117,7 @@ def process(dis, batch, SnpNumsString , model, StatesIndex, log):
     model_output_df=model_output_df_raw_nodup.abs()
     log.info('Read functional %d SNPs.', model_output_df.shape[0]) 
     ###Load GWAS summary statistic file
-    gwas_sumstats = pd.read_csv("/work/long_lab/qli/postdoc/Cancer_GWAS_SS/"+dis+"_dbSNPs_impute_summary_statistic_polyfun.txt",sep="\t")
+    gwas_sumstats = pd.read_csv("./Cancer_GWAS_SS/"+dis+"_dbSNPs_impute_summary_statistic_polyfun.txt",sep="\t")
     gwas_sumstats['CHR']=gwas_sumstats['CHR'].astype("str")
     gwas_sumstats['POSITION']=gwas_sumstats['POSITION'].astype('str')
     gwas_sumstats['ID']=gwas_sumstats[['CHR', 'POSITION','A2','A1']].agg('_'.join, axis=1)

@@ -32,11 +32,24 @@ python 1.TL_TF_t10ph_breast.py
 python 1.TL_TF_t10ph_prostate.py
 ```
 ## Calculate tCRAs scores from TL-breast and TL-prostate
-GWAS summary statistics are required to generate input files for tCRA scores. Example input files for calculating tCRA scores can be found at ./data/Example_input_tCRAs.txt. Variants are in format of chr_pos_ref_alt. 
+GWAS summary statistics are required to generate input files for tCRA scores. Example input files for calculating tCRA scores can be found at ./data/Example_input_tCRAs.txt. Variants are in format of chr_pos_ref_alt.
 ```
-python 1.2.TL_tCRAs_scores.py
+python 2.TL_tCRAs_scores.py
 ```
 ## Conduct TWAS analyses
+We utilized gene expression and genotype downloaded from GTEx (https://gtexportal.org/home/datasets).
+
+In the TWAS process, a predictive model is built by combining gene expression data (e.g., GTEx expression data normalized with PEER factors) and cis-variant genotypes within a specific distance around the gene TSS (e.g., ±1Mb). Using elastic-net regression, a predictive model for each gene is trained to estimate the effect of each variant on gene expression. Elastic-net combines L1 and L2 penalties to optimize weights, which capture each variant’s influence on gene expression.
+```
+Rscript TWAS_modelbuilding_GTEx.R
+Rscript WeightsSummaryToDB.R
+```
+
+In the second step, the trained weights are applied to GWAS summary statistics to calculate association Z-scores for each gene. These Z-scores estimate the association between predicted gene expression and disease risk, with significance evaluated using P-values after Bonferroni correction. This approach ultimately allows researchers to identify genes whose predicted expression levels are statistically associated with disease risk, providing insight into the genetic architecture of complex traits.
+```
+SPrediXcan.py --model_db_path breast_2024_TL_1500K.db --covariance breast_2024_TL_1500K_cov.txt.gz --model_db_snp_key rsid --gwas_folder ./Cancer_GWAS_SS/breast_assoc_dosage/ --gwas_file_pattern ".*gz" --snp_column SNP --effect_allele_column A1 --non_effect_allele_column A2 --beta_column BETA  --pvalue_column P --output_file  breast_2024_TL_1500K.TWAS --verbosity 2
+```
+More information can be found in https://github.com/XingyiGuo/TF-TWAS
 
 ## Contacts
 Qing Li: liqingbioinfo@gmail.com  

@@ -26,6 +26,7 @@ import tfenformer_breast
 import pdb
 import sonnet as snt
 import wandb
+import json
 wandb.login()
 
 
@@ -163,7 +164,6 @@ GEnformer_variables_name_list = tf.train.list_variables(checkpoint_path) ##list 
 
 
 ##Match local variables and Google trained models
-import json
 variables_files=open("./data/TL_Enformer_MatchDict/Enformer_all_Lvariables_matched_withindex_dict_b275.json","r")
 variables_match_dict=json.load(variables_files)
 
