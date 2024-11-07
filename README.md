@@ -14,7 +14,7 @@
   - tensoflow (2.4.1)
 
 ## Download Enformer model and variants scores from Enformer models
-- The final Enformer model is saved in checkpoint format and is available for download at: gs://dm-enformer/models/enformer/sonnet_weights/. Please download the files and place them in data/Enformer_checkpoint/.
+- The final Enformer model is saved in checkpoint format and is available for download at: gs://dm-enformer/models/enformer/sonnet_weights/. Please download the files and place them in ./data/Enformer_checkpoint/.
 - Variant effect scores for all common variants (MAF > 0.5% in any population) included in the 1000 Genomes Project from Enformer model are available:
   https://github.com/google-deepmind/deepmind-research/tree/master/enformer
 
@@ -49,7 +49,7 @@ In the second step, the trained weights are applied to GWAS summary statistics t
 ```
 SPrediXcan.py --model_db_path breast_2024_TL_1500K.db --covariance breast_2024_TL_1500K_cov.txt.gz --model_db_snp_key rsid --gwas_folder ./Cancer_GWAS_SS/breast_assoc_dosage/ --gwas_file_pattern ".*gz" --snp_column SNP --effect_allele_column A1 --non_effect_allele_column A2 --beta_column BETA  --pvalue_column P --output_file  breast_2024_TL_1500K.TWAS --verbosity 2
 ```
-More information can be found in https://github.com/theLongLab/TF-TWAS 
+More information can be found in https://github.com/theLongLab/TF-TWAS
 
 ## Contacts
 Qing Li: liqingbioinfo@gmail.com  
