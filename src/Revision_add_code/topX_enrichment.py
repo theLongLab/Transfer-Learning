@@ -147,49 +147,80 @@ def number_SNPs_in_out_of_func_regions(target_SNPs_set,CellLine,ChromState):
 
  
 def main():
-    '''
-    # promoter_ID_list=["E1","E2","E10","E11"] 1_2_10_11
-    # promoter_enhancer_ID_list=["E1","E2","E6","E7","E10","E11","E12"]
-    # enhancer_ID_list=["E6","E7","E11","E12"] 6_7_11_12
-    '''
-    
-	folder_path="/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/1_revision_DTL/CNN_breast_hg38_scores/"
-	scores_file_num=51 # [0...51)
-	topX_list=[1e6, 1.5e6, 2e6]
-	topX_dfs = topX_SNPs(folder_path, scores_file_num, topX_list)
-    
-    StatesIndex="6_7"
-    cell_lines=["prostate","E027","E028","E029","E055","E066","E119","E121","E124","E125","E126"]
-    output_path="/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/1_revision_DTL/CNN_breast_hg19_E6_E7_percent/"
-    model_prefix="CNN"
-    dis="breast"
-    
-    if StatesIndex =="0":
+    """
+    Example usage:
+    python script.py 1000000 1500000 2000000
+    """
+    folder_path = "/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/1_revision_DTL/CNN_breast_hg38_scores/"
+    scores_file_num = 51  # files: [0 ... 50]
+    # -----------------------------
+    # Parse topX list from command line
+    # -----------------------------
+    if len(sys.argv) < 2:
+        raise ValueError("Please provide topX values, e.g. 1000000 1500000")
+    topX_list = [int(x) for x in sys.argv[1:]]
+    topX_dfs = topX_SNPs(folder_path, scores_file_num, topX_list)
+    # -----------------------------
+    # Parameters
+    # -----------------------------
+    StatesIndex = "7"
+    cell_lines = [
+        "prostate", "E027", "E028", "E029", "E055",
+        "E066", "E119", "E121", "E124", "E125", "E126"
+    ]
+    output_path = "/work/long_lab/qli/Enformer_DTL/ModelTraining_OldDGX/1_revision_DTL/CNN_breast_hg19_E6_E7_percent/"
+    model_prefix = "CNN"
+    disease = "breast"
+    os.makedirs(output_path, exist_ok=True)
+    # -----------------------------
+    # Parse chromatin state index
+    # -----------------------------
+    if StatesIndex == "0":
         StatesIndexList = range(15)
     elif "_" in StatesIndex:
         StatesIndexList = [int(x) for x in StatesIndex.split("_")]
     else:
         StatesIndexList = [int(StatesIndex)]
-        
-    ###Calculate the percentage of SNPs locating in target roadmap states / GWAS risk SNPs
-    for topX_key in topX_dfs.keys():
-        topX_df=topX_dfs.get(topX_key)
-        topX_SNPs_ID_hg19=list(topX_df["hg19_index"])
-        for i in StatesIndexList:
-            ChromState = str(i)
-            model_topSNP_in_cell_lines_functional_regions=[]
-            model_topSNP_outof_cell_lines_functional_regions=[]
-            percentage_model_topSNP_in_cell_lines_functional_regions=[]
-            records_df_AllCellLine=pd.DataFrame(columns=['CellLine', 'snp', 'fs', 'fe', 'bs', 'be'])
-            for CellLine in cell_lines:           
-                SNP_in_func_regions,SNP_outof_func_regions,records_df_perCellLine = number_SNPs_in_out_of_func_regions(topX_SNPs_ID_hg19, CellLine, ChromState)
-                records_df_AllCellLine=pd.concat([records_df_AllCellLine,records_df_perCellLine])
-                model_topSNP_in_cell_lines_functional_regions.append(len(SNP_in_func_regions))
-                model_topSNP_outof_cell_lines_functional_regions.append(len(SNP_outof_func_regions))
-                percentage_model_topSNP_in_cell_lines_functional_regions.append(len(SNP_in_func_regions)/(len(SNP_outof_func_regions)+len(SNP_in_func_regions)))
-            model_enrichment_df = pd.DataFrame({"CellLines":cell_lines, "NumInFunc":model_topSNP_in_cell_lines_functional_regions, "NumOutofFunc":model_topSNP_outof_cell_lines_functional_regions,"PercentageInFunc":percentage_model_topSNP_in_cell_lines_functional_regions})
-            model_enrichment_df.to_csv(output_path+model_prefix+"_"+str(topX_key)+"_ChromState_"+str(ChromState)+"_percentage.csv",index=False)
-            records_df_AllCellLine.to_csv(output_path+model_prefix+"_"+str(topX_key)+"_ChromState_"+str(ChromState)+"_records.csv",index=False)
-        
-if __name__ == '__main__':
+    # -----------------------------
+    # Main computation
+    # -----------------------------
+    for topX_key, topX_df in topX_dfs.items():
+        topX_SNPs_ID_hg19 = list(topX_df["hg19_index"])
+        for state in StatesIndexList:
+            ChromState = str(state)
+            num_in_list = []
+            num_out_list = []
+            perc_list = []
+            records_df_all = pd.DataFrame(
+                columns=["CellLine", "snp", "fs", "fe", "bs", "be"]
+            )
+            for cell in cell_lines:
+                SNP_in, SNP_out, records_df = number_SNPs_in_out_of_func_regions(
+                    topX_SNPs_ID_hg19, cell, ChromState
+                )
+                records_df_all = pd.concat(
+                    [records_df_all, records_df], ignore_index=True
+                )
+                n_in = len(SNP_in)
+                n_out = len(SNP_out)
+                total = n_in + n_out
+                num_in_list.append(n_in)
+                num_out_list.append(n_out)
+                perc_list.append(n_in / total if total > 0 else 0)
+            model_enrichment_df = pd.DataFrame({
+                "CellLines": cell_lines,
+                "NumInFunc": num_in_list,
+                "NumOutofFunc": num_out_list,
+                "PercentageInFunc": perc_list
+            })
+            model_enrichment_df.to_csv(
+                f"{output_path}{model_prefix}_{topX_key}_ChromState_{ChromState}_percentage.csv",
+                index=False
+            )
+            records_df_all.to_csv(
+                f"{output_path}{model_prefix}_{topX_key}_ChromState_{ChromState}_records.csv",
+                index=False
+            )
+
+if __name__ == "__main__":
     main()
